@@ -1,0 +1,14 @@
+﻿using Microsoft.EntityFrameworkCore;
+using PeliculasApi.Entidades;
+
+namespace PeliculasApi.Data
+{
+    public class ApplicationDbContext: DbContext    
+    {
+        public ApplicationDbContext(DbContextOptions options) : base(options)
+        {
+        }
+
+        public DbSet<Genero>Generos { get; set; }
+    }
+}

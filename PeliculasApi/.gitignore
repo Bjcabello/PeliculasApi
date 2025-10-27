@@ -1,0 +1,66 @@
+﻿# Dependencias NuGet
+**/packages/*
+!**/packages/build/
+!packages/repositories.config
+
+# Archivos de compilación y output (bin y obj son comunes en .NET)
+**/bin/
+**/obj/
+**/bin/Debug/
+**/bin/Release/
+**/obj/Debug/
+**/obj/Release/
+/[Oo]utput/
+/[Bb]uild/
+
+# Archivos de Visual Studio / VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.sln.docstates
+*.cache
+*.userosscache
+*.sln.DotSettings.user
+*.code-workspace
+
+
+secrets.json
+*.config
+web.config
+web.Debug.config
+web.Release.config
+
+# Archivos de Entity Framework / Migraciones (snapshots se regeneran)
+**/Migrations/*.cs  # Opcional: Ignora migraciones si las generas en CI/CD; de lo contrario, sube
+ApplicationDbContextModelSnapshot.cs  # Snapshot generado, se regenera
+*.TemporaryFiles/
+
+# Archivos de testing y logs (si agregas tests después)
+TestResults/
+*.log
+logs/
+temp/
+tmp/
+
+# Archivos HTTP/REST Client (de VS, como tus PeliculasApi.http)
+*.http
+*.rest
+
+# NuGet y paquetes
+*.nupkg
+!**/packages/build/
+!**/*.nuspec
+
+# Archivos del OS/IDE
+.DS_Store
+Thumbs.db
+.idea/  # Si usas Rider
+*.swp
+*.tlog
+
+# Connected Services (si son generados por VS)
+ConnectedServices/
+
+# Dependencies (NuGet se restaura automáticamente)
+Dependencies/
