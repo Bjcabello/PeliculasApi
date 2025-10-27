@@ -7,18 +7,19 @@ using PeliculasApi.Data;
 using PeliculasApi.DTOs;
 using PeliculasApi.Entidades;
 using PeliculasApi.Utilidades;
+using System.Threading.Tasks;
 
 namespace PeliculasApi.Controllers
 {
     [Route("api/generos")]
     [ApiController]
-    public class GeneroController: ControllerBase
+    public class GeneroController : ControllerBase
     {
-        
+
         private readonly IOutputCacheStore outputCacheStore;
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
-        private const string cacheTag  = "generos";
+        private const string cacheTag = "generos";
 
         public GeneroController(IOutputCacheStore outputCacheStore, ApplicationDbContext context, IMapper mapper)
         {
@@ -38,17 +39,17 @@ namespace PeliculasApi.Controllers
                 .OrderBy(g => g.Nombre)
                 .Paginar(paginacion)
                 .ProjectTo<GeneroDTO>(mapper.ConfigurationProvider).ToListAsync();
-                
+
 
         }
 
-        [HttpGet("{id:int}", Name="ObtenerGeneroPorId")]
+        [HttpGet("{id:int}", Name = "ObtenerGeneroPorId")]
         [OutputCache(Tags = ["cacheTag"])]
-        public async  Task<ActionResult<GeneroDTO>> Get(int id)
+        public async Task<ActionResult<GeneroDTO>> Get(int id)
         {
             var genero = await context.Generos
                 .ProjectTo<GeneroDTO>(mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync(g=> g.Id == id);
+                .FirstOrDefaultAsync(g => g.Id == id);
 
             if (genero is null)
             {
@@ -87,10 +88,20 @@ namespace PeliculasApi.Controllers
             return NoContent();
         }
 
-        [HttpDelete]
-        public void Delete()
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            throw new NotImplementedException();
+            var registrosBorrados = await context.Generos
+                 .Where(g => g.Id == id)
+                 .ExecuteDeleteAsync();
+            if (registrosBorrados == 0)
+            {
+               return NotFound();
+            }
+            await outputCacheStore.EvictByTagAsync(cacheTag, default);
+            return NoContent();
+
+
         }
     }
-}
+}           
