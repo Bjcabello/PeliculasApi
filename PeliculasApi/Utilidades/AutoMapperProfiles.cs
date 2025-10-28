@@ -8,12 +8,21 @@ namespace PeliculasApi.Utilidades
         public AutoMapperProfiles()
         {
             ConfigurarMapeoGeneros();
+            ConfigurarMapeoActores();
         }
 
         private void ConfigurarMapeoGeneros()
+        {
+            CreateMap<ActorCreacionDTO, Actor>()
+            .ForMember(actor => actor.Foto, opciones => opciones.Ignore());
+
+        }
+
+        private void ConfigurarMapeoActores()
         {
             CreateMap<GeneroCreacionDTO, Genero>();
             CreateMap<Genero, GeneroDTO>();
         }
     }
 }
+
