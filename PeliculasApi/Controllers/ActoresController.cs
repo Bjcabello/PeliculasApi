@@ -79,10 +79,11 @@ namespace PeliculasApi.Controllers
 
         }
 
-        [HttpPut("{id: int}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> Put(int id, [FromForm] ActorCreacionDTO actorCreacionDTO)
         {
             var actor = await context.Actores.FirstOrDefaultAsync(a => a.Id == id);
+
             if(actor is null)
             { 
                 return NotFound(); 
@@ -93,9 +94,21 @@ namespace PeliculasApi.Controllers
             {
                 actor.Foto = await almacenadorArchivos.Editar(actor.Foto, contenedor, actorCreacionDTO.Foto);
 
-
             }
             await context.SaveChangesAsync();
+            await outputCacheStore.EvictByTagAsync(cacheTag, default);
+            return NoContent();
+        }
+
+        [HttpDelete("{id: int}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var registrosBorrados = await context.Actores.Where(a => a.Id == id).ExecuteDeleteAsync();
+        
+            if (registrosBorrados == 0)
+            {
+                return NotFound();
+            }
             await outputCacheStore.EvictByTagAsync(cacheTag, default);
             return NoContent();
         }
