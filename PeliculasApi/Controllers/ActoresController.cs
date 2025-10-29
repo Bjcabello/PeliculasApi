@@ -78,5 +78,26 @@ namespace PeliculasApi.Controllers
             return CreatedAtRoute("ObtenerActorPorId", new { id = actor.Id }, actor);
 
         }
+
+        [HttpPut("{id: int}")]
+        public async Task<IActionResult> Put(int id, [FromForm] ActorCreacionDTO actorCreacionDTO)
+        {
+            var actor = await context.Actores.FirstOrDefaultAsync(a => a.Id == id);
+            if(actor is null)
+            { 
+                return NotFound(); 
+            }
+            actor = mapper.Map(actorCreacionDTO, actor);
+
+            if (actorCreacionDTO.Foto is not null)
+            {
+                actor.Foto = await almacenadorArchivos.Editar(actor.Foto, contenedor, actorCreacionDTO.Foto);
+
+
+            }
+            await context.SaveChangesAsync();
+            await outputCacheStore.EvictByTagAsync(cacheTag, default);
+            return NoContent();
+        }
     }
 }
