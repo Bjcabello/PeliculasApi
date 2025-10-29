@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
+using Microsoft.EntityFrameworkCore;
 using PeliculasApi.Data;
 using PeliculasApi.DTOs;
 using PeliculasApi.Entidades;
+using PeliculasApi.Servicios;
+using PeliculasApi.Utilidades;
 
 namespace PeliculasApi.Controllers
 {
@@ -13,20 +17,46 @@ namespace PeliculasApi.Controllers
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
         private readonly IOutputCacheStore outputCacheStore;
+        private readonly IAlmacenadorArchivos almacenadorArchivos;
         private const string cacheTag = "actores";
+        private readonly string contenedor = "actores";
 
-        public ActoresController(ApplicationDbContext context, IMapper mapper, IOutputCacheStore outputCacheStore)
+
+        public ActoresController(ApplicationDbContext context, IMapper mapper, IOutputCacheStore outputCacheStore, IAlmacenadorArchivos almacenadorArchivos)
         {
             this.context = context;
             this.mapper = mapper;
             this.outputCacheStore = outputCacheStore;
+            this.almacenadorArchivos = almacenadorArchivos;
+        }
+
+        [HttpGet]
+        [OutputCache(Tags = [cacheTag])]
+        public async Task<List<ActorDTO>> Get([FromQuery] PaginacionDTO paginacion)
+        {
+            var queryable = context.Actores;
+            await HttpContext.InsertarParametrosPaginacionEnCabecera(queryable);
+            return await queryable
+                .OrderBy(a => a.Nombre)
+                .Paginar(paginacion)
+                .ProjectTo<ActorDTO>(mapper.ConfigurationProvider)
+                .ToListAsync();
         }
 
 
         [HttpGet("{id:int}", Name = "ObtenerActorPorId")]
-        public void Get(int id)
+        [OutputCache(Tags = [cacheTag])]
+        public async Task<ActionResult<ActorDTO>> Get(int id)
         {
-            throw new NotImplementedException();
+            var actor = await context.Actores
+                .ProjectTo<ActorDTO>(mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (actor is null)
+            {
+                return NotFound();
+            }
+            return actor;
         }
 
 
@@ -34,6 +64,12 @@ namespace PeliculasApi.Controllers
         public async Task<ActionResult> Post([FromForm] ActorCreacionDTO actorCreacionDTO)
         {
             var actor = mapper.Map<Actor>(actorCreacionDTO);
+
+            if (actorCreacionDTO.Foto is not null)
+            {
+                var url = await almacenadorArchivos.Almacenar(contenedor, actorCreacionDTO.Foto);
+                actor.Foto = url;
+            }
 
             context.Add(actor);
             await context.SaveChangesAsync();

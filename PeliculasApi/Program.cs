@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PeliculasApi;
 using PeliculasApi.Data;
+using PeliculasApi.Servicios;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,8 @@ builder.Services.AddCors(opciones =>
     });
 });
 
+builder.Services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
@@ -43,12 +46,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors();
+app.UseStaticFiles();
 
-app.UseOutputCache();
+app.UseCors();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseOutputCache();
 
 app.Run();
