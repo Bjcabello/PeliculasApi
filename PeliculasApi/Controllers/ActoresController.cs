@@ -12,7 +12,7 @@ using PeliculasApi.Utilidades;
 namespace PeliculasApi.Controllers
 {
     [Route("api/actores")]
-    public class ActoresController:ControllerBase
+    public class ActoresController:CustomBaseController
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
@@ -23,6 +23,7 @@ namespace PeliculasApi.Controllers
 
 
         public ActoresController(ApplicationDbContext context, IMapper mapper, IOutputCacheStore outputCacheStore, IAlmacenadorArchivos almacenadorArchivos)
+            :base(context, mapper, outputCacheStore, cacheTag)
         {
             this.context = context;
             this.mapper = mapper;
@@ -34,13 +35,7 @@ namespace PeliculasApi.Controllers
         [OutputCache(Tags = [cacheTag])]
         public async Task<List<ActorDTO>> Get([FromQuery] PaginacionDTO paginacion)
         {
-            var queryable = context.Actores;
-            await HttpContext.InsertarParametrosPaginacionEnCabecera(queryable);
-            return await queryable
-                .OrderBy(a => a.Nombre)
-                .Paginar(paginacion)
-                .ProjectTo<ActorDTO>(mapper.ConfigurationProvider)
-                .ToListAsync();
+            return await Get<Actor, ActorDTO>(paginacion, ordenarPor: a => a.Nombre);
         }
 
 
@@ -100,17 +95,10 @@ namespace PeliculasApi.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id: int}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var registrosBorrados = await context.Actores.Where(a => a.Id == id).ExecuteDeleteAsync();
-        
-            if (registrosBorrados == 0)
-            {
-                return NotFound();
-            }
-            await outputCacheStore.EvictByTagAsync(cacheTag, default);
-            return NoContent();
+            return await Delete<Actor>(id);
         }
     }
 }

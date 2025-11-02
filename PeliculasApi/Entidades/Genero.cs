@@ -3,7 +3,7 @@ using PeliculasApi.Validaciones;
 
 namespace PeliculasApi.Entidades
 {
-    public class Genero
+    public class Genero: IId
     {
         public int Id { get; set; }
         [Required(ErrorMessage = "El Campo {0} es requerido")]
