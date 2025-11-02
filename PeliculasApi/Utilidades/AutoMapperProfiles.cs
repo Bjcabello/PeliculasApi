@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using PeliculasApi.Entidades;
 using PeliculasApi.DTOs;
+using NetTopologySuite.Geometries;
 namespace PeliculasApi.Utilidades
 {
     public class AutoMapperProfiles: Profile
     {
-        public AutoMapperProfiles()
+        public AutoMapperProfiles(GeometryFactory geometryFactory)
         {
             ConfigurarMapeoGeneros();
             ConfigurarMapeoActores();

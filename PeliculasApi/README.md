@@ -22,6 +22,7 @@ API backend para gestión de películas usando ASP.NET Core, Entity Framework y 
 - .NET 8
 - Entity Framework Core
 - AutoMapper
+- Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite
 - Swagger/OpenAPI
 
 ## Contribuir

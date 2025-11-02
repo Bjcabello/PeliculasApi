@@ -11,5 +11,6 @@ namespace PeliculasApi.Data
 
         public DbSet<Genero>Generos { get; set; }
         public DbSet<Actor> Actores { get; set; }
+        public DbSet<Cine> Cines { get; set; }
     }
 }
