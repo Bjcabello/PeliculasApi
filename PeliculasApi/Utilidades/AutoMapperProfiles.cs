@@ -2,6 +2,7 @@
 using PeliculasApi.Entidades;
 using PeliculasApi.DTOs;
 using NetTopologySuite.Geometries;
+
 namespace PeliculasApi.Utilidades
 {
     public class AutoMapperProfiles: Profile
@@ -11,6 +12,17 @@ namespace PeliculasApi.Utilidades
             ConfigurarMapeoGeneros();
             ConfigurarMapeoActores();
             ConfigurarMapeoCines(geometryFactory);
+            ConfigurarMapeoPeliculas();
+        }
+
+        private void ConfigurarMapeoPeliculas()
+        {
+            CreateMap<PeliculaCreacionDTO, Pelicula>()
+                .ForMember(x => x.Poster, opciones => opciones.Ignore())
+                .ForMember(x => x.PeliculaGeneros, dto => dto.MapFrom(p => p.GenerosIds!.Select(id => new PeliculaGenero { GeneroId = id })))
+                .ForMember(x => x.PeliculaCines, dto => dto.MapFrom(p => p.CinesIds!.Select(id => new PeliculaCine { CineId = id })))
+                .ForMember(p => p.PeliculaActores, dto => dto.MapFrom(p => p.Actores!.Select(actor => new PeliculaActor { ActorId = actor.Id, Personaje = actor.Personaje })));
+
         }
 
         private void ConfigurarMapeoCines(GeometryFactory geometryFactory)
@@ -40,3 +52,7 @@ namespace PeliculasApi.Utilidades
     }
 }
 
+////.ForMember(x => x.PeliculasCines, dto =>
+//                dto.MapFrom(propa => propa.CinesIds!.Select(id => new PeliculaCine { CineId = id })))
+//                 .ForMember(x => x.PeliculasActores, dto =>
+//                dto.MapFrom(p => p.Actores!.Select(actor => new PeliculaGenero { ActorId = Actor.Id, Personaje = Actor.Personaje })));
