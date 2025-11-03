@@ -13,7 +13,7 @@ namespace PeliculasApi.Controllers
 {
     [Route("api/generos")]
     [ApiController]
-    public class GeneroController : CustomBaseController
+    public class GenerosController : CustomBaseController
     {
 
         private readonly IOutputCacheStore outputCacheStore;
@@ -21,7 +21,7 @@ namespace PeliculasApi.Controllers
         private readonly IMapper mapper;
         private const string cacheTag = "generos";
 
-        public GeneroController(IOutputCacheStore outputCacheStore, ApplicationDbContext context, IMapper mapper)
+        public GenerosController(IOutputCacheStore outputCacheStore, ApplicationDbContext context, IMapper mapper)
             :base(context, mapper, outputCacheStore, cacheTag)
         {
             this.outputCacheStore = outputCacheStore;
