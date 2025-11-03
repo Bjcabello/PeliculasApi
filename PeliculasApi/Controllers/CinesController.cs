@@ -51,7 +51,7 @@ namespace PeliculasApi.Controllers
             return await Put<CineCreacionDTO, Cine>(id, cineCreacionDTO);
         }
 
-        [HttpDelete("{id: int}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {  
             return await Delete<Cine>(id);
