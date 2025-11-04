@@ -30,10 +30,45 @@ namespace PeliculasApi.Controllers
             this.outputCacheStore = outputCacheStore;
             this.almacenadorArchivos = almacenadorArchivos;
         }
-        [HttpGet("{id:int}", Name = "ObtenerPeliculaPorId")]
-        public IActionResult Get(int id)
+
+        [HttpGet("Landing")]
+        public async Task<ActionResult<LandingPageDTO>> Get()
         {
-            throw new NotImplementedException();
+            var top = 6;
+            var hoy = DateTime.Today;
+
+            var proximoEstrenos = await context.Peliculas
+                .Where(p => p.FechaLanzamiento > hoy)
+                .OrderBy(p => p.FechaLanzamiento)
+                .Take(top)
+                .ProjectTo<PeliculaDTO>(mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            var enCines = await context.Peliculas
+                .Where(p => p.PeliculaCines.Select(pc => pc.PeliculaId).Contains(p.Id))
+                .OrderBy(p => p.FechaLanzamiento)
+                .Take(top)
+                .ProjectTo<PeliculaDTO>(mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            var resultado = new LandingPageDTO();
+            resultado.EnCines = enCines;
+            resultado.ProximosEstrenos = proximoEstrenos;
+            return resultado;
+        }
+
+        [HttpGet("{id:int}", Name = "ObtenerPeliculaPorId")]
+        public async Task<ActionResult<PeliculaDetallesDTO>> Get(int id)
+        {
+            var pelicula = await context.Peliculas
+                .ProjectTo<PeliculaDetallesDTO>(mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (pelicula is null)
+            {
+                return NotFound();
+            }
+            return pelicula;
         }
 
         [HttpGet("PostGet")]
