@@ -38,21 +38,21 @@ namespace PeliculasApi.Utilidades
 
         private void ConfigurarMapeoGeneros()
         {
-            CreateMap<ActorCreacionDTO, Actor>()
-            .ForMember(actor => actor.Foto, opciones => opciones.Ignore());
-            CreateMap<Actor, ActorDTO>();
-
+            CreateMap<GeneroCreacionDTO, Genero>();
+            CreateMap<Genero, GeneroDTO>();
         }
 
         private void ConfigurarMapeoActores()
         {
-            CreateMap<GeneroCreacionDTO, Genero>();
-            CreateMap<Genero, GeneroDTO>();
+            CreateMap<ActorCreacionDTO, Actor>()
+            .ForMember(actor => actor.Foto, opciones => opciones.Ignore());
+            CreateMap<Actor, ActorDTO>();
+
+            CreateMap<Actor, PeliculaActorDTO>();
+
+
         }
     }
 }
 
-////.ForMember(x => x.PeliculasCines, dto =>
-//                dto.MapFrom(propa => propa.CinesIds!.Select(id => new PeliculaCine { CineId = id })))
-//                 .ForMember(x => x.PeliculasActores, dto =>
-//                dto.MapFrom(p => p.Actores!.Select(actor => new PeliculaGenero { ActorId = Actor.Id, Personaje = Actor.Personaje })));
+     
