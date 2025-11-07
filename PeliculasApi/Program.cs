@@ -1,12 +1,15 @@
 
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using PeliculasApi;
 using PeliculasApi.Data;
 using PeliculasApi.Servicios;
 using PeliculasApi.Utilidades;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +25,27 @@ builder.Services.AddSingleton(proveedor => new MapperConfiguration(configuracion
     var geometryFactory = proveedor.GetRequiredService<GeometryFactory>();
     configuracion.AddProfile(new AutoMapperProfiles(geometryFactory));
 }).CreateMapper());
+
+builder.Services.AddIdentityCore<IdentityUser>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<UserManager<IdentityUser>>();
+builder.Services.AddScoped<SignInManager<IdentityUser>>();
+
+builder.Services.AddAuthentication().AddJwtBearer(opciones =>
+{
+    opciones.MapInboundClaims = false;
+    opciones.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["llavejwt"]!)),
+        ClockSkew = TimeSpan.Zero
+    };
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(opciones=>
     opciones.UseSqlServer("name=DefaultConnection", sqlServer =>

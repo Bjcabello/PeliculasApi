@@ -19,11 +19,15 @@ API backend para gestión de películas usando ASP.NET Core, Entity Framework y 
 - Endpoint ejemplo: GET `/api/generos?pagina=1&recordsPorPagina=5`
 
 ## Tecnologías
-- .NET 8
-- Entity Framework Core
-- AutoMapper
-- Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite
-- Swagger/OpenAPI
+- .NET 9
+- AutoMapper version 13.0.1
+- Microsoft.EntityFrameworkCore.SqlServer version: 9.0.10
+- Microsoft.EntityFrameworkCore.Tools version: 9.0.10
+- Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite version: 9.0.10
+- Microsoft.AspNetCore.OpenApi version: 9.0.9
+- Microsoft.AspNetCore.Identity.EntityFrameworkCore  version: 9.0.10
+- Microsoft.AspNetCore.Authentication.JwtBearer version: 9.0.10
+- Swashbuckle.AspNetCore version: 9.0.6
 
 ## Contribuir
 ¡Pull requests bienvenidos!
