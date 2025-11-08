@@ -36,7 +36,8 @@ builder.Services.AddScoped<SignInManager<IdentityUser>>();
 builder.Services.AddAuthentication().AddJwtBearer(opciones =>
 {
     opciones.MapInboundClaims = false;
-    opciones.TokenValidationParameters = new TokenValidationParameters
+
+    opciones.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
         ValidateIssuer = false,
         ValidateAudience = false,
@@ -87,6 +88,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseCors();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
