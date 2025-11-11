@@ -48,6 +48,11 @@ builder.Services.AddAuthentication().AddJwtBearer(opciones =>
     };
 });
 
+builder.Services.AddAuthorization(opciones =>
+{
+    opciones.AddPolicy("esadmin", politica => politica.RequireClaim("esadmin"));
+});
+
 builder.Services.AddDbContext<ApplicationDbContext>(opciones=>
     opciones.UseSqlServer("name=DefaultConnection", sqlServer =>
     sqlServer.UseNetTopologySuite()));
