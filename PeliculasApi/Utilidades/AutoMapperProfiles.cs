@@ -2,6 +2,7 @@
 using PeliculasApi.Entidades;
 using PeliculasApi.DTOs;
 using NetTopologySuite.Geometries;
+using Microsoft.AspNetCore.Identity;
 
 namespace PeliculasApi.Utilidades
 {
@@ -13,6 +14,12 @@ namespace PeliculasApi.Utilidades
             ConfigurarMapeoActores();
             ConfigurarMapeoCines(geometryFactory);
             ConfigurarMapeoPeliculas();
+            ConfigurarMapeoUsuarios();
+        }
+
+        private void ConfigurarMapeoUsuarios()
+        {
+            CreateMap<IdentityUser, UsuarioDTO>();
         }
 
         private void ConfigurarMapeoPeliculas()
