@@ -41,10 +41,11 @@ namespace PeliculasApi.Controllers
             }
             else
             {
-                return BadRequest(resultado.Errors);
+                
+                return BadRequest(new { errores = resultado.Errors.Select(e => e.Description).ToList() });
             }
-
         }
+
 
         [HttpPost("login")]
         public async Task<ActionResult<RespuestaAutenticacionDTO>> Login(CredencialesUsuarioDTO credencialesUsuarioDTO)
@@ -52,8 +53,7 @@ namespace PeliculasApi.Controllers
             var usuario = await userManager.FindByEmailAsync(credencialesUsuarioDTO.Email);
             if (usuario is null)
             {
-                var errores = ConstruirLoginIncorrecto();
-                return BadRequest(errores);
+                return BadRequest(new { errores = new List<string> { "Login incorrecto" } });
             }
 
             var resultado = await signInManager.CheckPasswordSignInAsync(usuario,
@@ -63,21 +63,20 @@ namespace PeliculasApi.Controllers
             {
                 return await ConstruirToken(usuario);
             }
-            else 
+            else
             {
-                var errores = ConstruirLoginIncorrecto();
-                return BadRequest(errores);
+                return BadRequest(new { errores = new List<string> { "Login incorrecto" } });
             }
         }
 
 
-        private IEnumerable<IdentityError> ConstruirLoginIncorrecto()
-        {
-            var identityError = new IdentityError() { Description = "Login Incorrecto" };
-            var errores = new List<IdentityError>();
-            errores.Add(identityError);
-            return errores;
-        }
+        //private IEnumerable<IdentityError> ConstruirLoginIncorrecto()
+        //{
+        //    var identityError = new IdentityError() { Description = "Login Incorrecto" };
+        //    var errores = new List<IdentityError>();
+        //    errores.Add(identityError);
+        //    return errores;
+        //}
 
         private async Task<RespuestaAutenticacionDTO> ConstruirToken(IdentityUser identityUser)
         {

@@ -1,8 +1,15 @@
-﻿namespace PeliculasApi.DTOs
+﻿
+
+using System.ComponentModel.DataAnnotations;
+
+namespace PeliculasApi.DTOs
 {
     public class CredencialesUsuarioDTO
     {
+        [EmailAddress]
+        [Required]
         public required string Email { get; set; }
+        [Required]
         public required string Password { get; set; }
     }
 }
